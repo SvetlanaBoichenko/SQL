@@ -18,7 +18,7 @@ Oдин к одному
 
 Многие ко многим
   
-2. Products - Supplier - Categories
+1. Products - Supplier - Categories
 Поля с ключами:
 (PK) ProductID, (FK) SupplierID, (FK) CategoryID 
   Продукция ProductID может быть разных категорих и иметь разных поставщиков
@@ -26,7 +26,7 @@ Oдин к одному
 также как и разные категории продуктов могут иметь разных поставщиков, 
 что отражено в  сооответствующих полях таблицы.
 
-3. Orders - Customers - Employers - Shippers
+2. Orders - Customers - Employers - Shippers
    Поля с ключами:
    (PK) OrdersID, (FK)Customers, (FK)EmployersID, (FK)ShipVia 
   Заказы могут отправляться различным потребителям, различными способами и 
