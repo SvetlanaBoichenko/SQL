@@ -10,6 +10,11 @@ https://github.com/SvetlanaBoichenko/SQL/blob/main/Tarea3.sql
 https://github.com/SvetlanaBoichenko/SQL/blob/main/Tarea3_ref.md
 
 ## 2
-По задачам к заданию 3 - все верно.
+По задачам к заданию 3:
+3.9.1. - Вывела в запросе не то поле таблицы Products 
+ Quantity Per Unit - Количество в одной упаковке 
+а надо было    
+UnitsInStock - количестко упаковок  
+невнимательно прочитала условие(
 
 
