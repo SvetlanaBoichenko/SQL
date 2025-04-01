@@ -1,3 +1,21 @@
+# Рефлексия к заданию 7.  
 
-SELECT OrderID, ProductID, Discount * 100 as discount_percent
-FROM [Order Details]
+Выведите вычислимое поле таблицы Order Details, в котором укажите значение поля Discount (скидка), выраженное в процентах.  
+Эталонное решение:  
+7.3.1. SELECT OrderID, ProductID, Discount * 100 as discount_percent  
+FROM [Order Details]   
+Мое решение:  
+7.3.1. SELECT (Discount*100)/UnitPrice FROM   
+[Order Details];  
+
+    
+Неправильно вычислила процент.. В поле Discount скидка указана в частях,  
+перевод в процены сделала так, как будно указана цена со скидкой.  
+Не вывела поля с ID  и на задали имя новому полю - "Скидка в процентах"  
+поэтому непонятно что вывела.  
+  
+Остальное верно.  
+
+
+
+    
