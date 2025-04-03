@@ -1,3 +1,4 @@
+# Рефлексия к заданию 8.
 
 8.3.2  
 Мое решение:  
@@ -14,5 +15,16 @@ Where [Order Details].UnitPrice < 20;
  Поспешила..  
 
  8.3.3
-Аналогично.
-Мое решение:
+Аналогичная ошибка.  
+Мое решение:  
+
+SELECT Products.ProductName, Categories.CategoryName, [Order Details].UnitPrice
+From Products,Categories, [Order Details] 
+Where [Order Details].UnitPrice < 20;
+
+также надо было связать таблицы по Products и  Order Details по ProductID,  
+а также Products и Categories по CategoryID, как это сделано в эталонном решении:
+ 
+ Products.CategoryID = Categories.CategoryID.
+
+Грубые ошибки, как результат невнимательного подхода.
