@@ -33,23 +33,23 @@ WHERE EXISTS
 (SELECT * FROM  Customers t3  
 WHERE t1.CustomerID= t3.CustomerID  AND t3.Region IS NOT NULL );  
   
-Выбрала только одно поле вместо всех, в результате вывела только один столбец.    
+Выбрала все поля, вместо одного.    
 Неправильно поняла условие    
     
 ## 9.4.3  
-Эталонное решение:   
-SELECT * FROM Orders t1   
-where t1.Freight > ANY   
-(SELECT UnitPrice FROM  Products)   
-
-  Мое решение:   
+Эталонное решение:  
 SELECT OrderID   
 FROM Orders   
 WHERE Freight > ALL   
   (SELECT UnitPrice FROM Products)   
   
+Мое решение:   
+SELECT * FROM Orders t1   
+where t1.Freight > ANY   
+(SELECT UnitPrice FROM  Products)  
+
   Та же ошибка, что и в предыдущей задаче -   
-  не вывела все поля.
+  вывела все поля.
 
 
 
