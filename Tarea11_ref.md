@@ -44,19 +44,14 @@ ORDER BY Freight;
 WHERE table1.primary_key = table2.foreign_key  
   
 10.4.3   
-SELECT Products.ProductName, [Order Details].UnitPrice   
+SELECT Products.ProductName, [Order Details].UnitPrice    
 FROM Products CROSS JOIN [Order Details]   
 WHERE Products.ProductID = [Order Details].ProductID;  
+
+не догадалась.
+Собственно, да, 
   
 10.4.4  
-Эталонное решение:  
-SELECT Products.ProductName, [Order Details].UnitPrice
-FROM Products INNER JOIN [Order Details]
-ON Products.ProductID = [Order Details].ProductID 
-  
-Мое решение:  
-
-
-
+совпадают
 
 
