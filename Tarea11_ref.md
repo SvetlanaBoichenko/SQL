@@ -39,13 +39,22 @@ ORDER BY Freight;
 
 
 
-10.4.3
-WHERE table1.primary_key = table2.foreign_key 
-
 10.4.3  
+Эталонное решение:  
+WHERE table1.primary_key = table2.foreign_key  
+  
+10.4.3   
+SELECT Products.ProductName, [Order Details].UnitPrice   
+FROM Products CROSS JOIN [Order Details]   
+WHERE Products.ProductID = [Order Details].ProductID;  
+  
+10.4.4  
+Эталонное решение:  
 SELECT Products.ProductName, [Order Details].UnitPrice
-FROM Products CROSS JOIN [Order Details]
-WHERE Products.ProductID = [Order Details].ProductID
+FROM Products INNER JOIN [Order Details]
+ON Products.ProductID = [Order Details].ProductID 
+  
+Мое решение:  
 
 
 
