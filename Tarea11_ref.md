@@ -15,19 +15,13 @@ AND [Order Details].UnitPrice <20;
 Только в запросах таблицы присоединяются с разных сторон.  
 
  
-  10.4.2 
-   
-SELECT Orders.Freight, Customers.CompanyName
-FROM Orders INNER JOIN Customers
-ON Orders.CustomerID = Customers.CustomerID
-ORDER BY Freight; 
-
 10.4.2  
 Эталонное решение:  
 Технически, мы получим несколько дополнительных записей, у которых в поле Freight записан NULL.  
 Это записи, которые не подошли под условие отбора, поэтому поля, соответствующие другой таблице,  
-заполняются значением NULL.  
-Мое решение:    
+заполняются значением NULL. 
+
+Мое решение:      
 SELECT Orders.Freight, Customers.CompanyName  
 FROM Orders FULL JOIN Customers  
 ON Orders.CustomerID = Customers.CustomerID  
@@ -38,20 +32,19 @@ ORDER BY Freight;
 В общем и целома верно. не отметила, что то, что поля, которые не совпали, заполняются NULL
 
 
-
 10.4.3  
 Эталонное решение:  
 WHERE table1.primary_key = table2.foreign_key  
-  
-10.4.3   
+
+Мое решение:
 SELECT Products.ProductName, [Order Details].UnitPrice    
 FROM Products CROSS JOIN [Order Details]   
-WHERE Products.ProductID = [Order Details].ProductID;  
+WHERE Products.ProductID = [Order Details].ProductID; 
 
-не догадалась.
-Собственно, да, 
+Да, но не записала в общем виде решение. 
+
   
 10.4.4  
-совпадают
+совпадают 
 
 
