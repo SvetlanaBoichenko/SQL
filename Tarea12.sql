@@ -16,3 +16,5 @@ Insert into Orders (CustomerID, EmployeeID, OrderDate, RequiredDate,
 ShippedDate, ShipVia)
 values ('ALFKI', '13','31-01-2024', '02-02-2025','03-02-2025', '2')
 
+При задании корректных FK ключей, проблем при добавлении записей   
+а таблицу Orders не возникало
