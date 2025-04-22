@@ -9,5 +9,18 @@ Set City  = 'Piter', Country = 'Russia'
 where City = 'Berlin' and Country = 'Germany';  
 
 
-13.3.3
+13.3.3  
+INSERT INTO Shippers (Companyname,Phone)  
+  values ('Binar', '(831)305-6383')
+INSERT INTO Shippers (Companyname,Phone)  
+  values ('Binar2', '(831)305-6384')
+
+
+Delete From  Shippers 
+ where CompanyName = 'Binar';
+Delete From  Shippers 
+ where CompanyName = 'Binar2';
+
+Удалила записи по имени компании, которую добавляла.
+
 
