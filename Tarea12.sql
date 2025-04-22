@@ -7,7 +7,7 @@ VALUES ('Boychenko','Svet','Bailadora','Flamemco', '1970-27-08','2025-03-01',
 'Valencia', '12004','España','12345','6789','Baila cada dia', '2');  
 
 12.3.2  
-INSERT INTO Empl oyeeTerritories (EmployeeID,TerritoryID)  
+INSERT INTO EmployeeTerritories (EmployeeID,TerritoryID)  
   values ('13', '01730');  
   
 
