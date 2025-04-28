@@ -39,7 +39,9 @@ RegionID	RegionDescription
 
   INSERT INTO Territory (TeritoryID, TerritoryDescription, RegionID)
 VALUES ('2', 'Krasno', 1);
-  
+.
+.
+.  
   INSERT INTO Territory (TeritoryID, TerritoryDescription, RegionID)
 VALUES ('7', 'Osipovichi', 5);
 
