@@ -1,5 +1,6 @@
 
 Создание индекса для поля RegionID для таблицы Region:
+  
 CREATE UNIQUE INDEX IX_RegionTerritory ON Region (RegionDescription)
 
 
