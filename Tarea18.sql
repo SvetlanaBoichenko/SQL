@@ -1,4 +1,4 @@
-
+ 
 1.Получить информацию о всех гномах, которые входят в какой-либо отряд, 
 вместе с информацией об их отрядах.
        
@@ -23,21 +23,18 @@ where priority = 1 and status = 'pending'
 Для каждого гнома, который владеет хотя бы одним предметом, 
 получить количество предметов, которыми он владеет.
        
-SELECT Dwarves.name, count(Items.item_id) AS sumItems
-from Dwarves,Items
-where Items.owner_id = Dwarves.dwarf_id
-       
-       
-5.
-Field        | Type         | Description                               |
-|--------------|--------------|-------------------------------------------|
-| dwarf_id     | INT          | Уникальный идентификатор гнома            |
-| name         | VARCHAR(100) | Имя гнома                                 |
-| age          | INT          | Возраст гнома                             |
-| profession   | VARCHAR(100) | Профессия гнома                           |
-| squad_id     | INT          | Идентификатор отряда                      
-                                (NULL, если не в отряде)  
+SELECT Dwarves.name, Items.name, count(Items.item_id) AS sumItems
+from Dwarves INNER JOIN Items On 
+       Dwarves.dwarf_id = Items.owner_id and Items.owner_id is not null
+group by Dwarves.name, Items.name
 
-Select Squad.name 
-where Squad.squad_id = 
-Select ( Dwarves.squad_id,  sum (dwarf_id) )
+5.
+Получить список всех отрядов и количество 
+гномов в каждом отряде. Также включите в выдачу отряды без гномов.
+
+select Squad.name, count (Dwarves.squad_id) as counDwarves
+from  Squad    INNER JOIN  Dwarves 
+ON Squad.squad_id = Dwarves.squad_id
+GROUP BY Dwarves.squad_id, Squad.squad_id 
+
+6.
