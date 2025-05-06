@@ -32,9 +32,40 @@ group by Dwarves.name, Items.name
 Получить список всех отрядов и количество 
 гномов в каждом отряде. Также включите в выдачу отряды без гномов.
 
-select Squad.name, count (Dwarves.squad_id) as counDwarves
+Select Squad.name, count (Dwarves.squad_id) as counDwarves
 from  Squad    INNER JOIN  Dwarves 
 ON Squad.squad_id = Dwarves.squad_id
 GROUP BY Dwarves.squad_id, Squad.squad_id 
 
-6.
+6. Получить список профессий с наибольшим количеством незавершённых задач 
+ ("pending" и "in_progress") у гномов этих профессий.
+ 
+ Select Dwarves.profession  as dwarvesProfession, Tasks.description As taskName,  sum (Tasks.task_id) as maxTasks
+ From Dwarves INNER JOIN Tasks
+ ON Tasks.status = 'pending' or Tasks.status = 'in_progress'
+ GROUP BY  Dwarves.profession, Tasks.description
+ Order by sum (Tasks.task_id)
+
+7.
+
+
+ Таблица Dwarves
+| Field        | Type         | Description                               |
+|--------------|--------------|-------------------------------------------|
+| dwarf_id     | INT          | Уникальный идентификатор гнома            |
+| name         | VARCHAR(100) | Имя гнома                                 |
+| age          | INT          | Возраст гнома                             |
+| profession   | VARCHAR(100) | Профессия гнома                           |
+| squad_id     | INT          | Идентификатор отряда                      
+                                (NULL, если не в отряде) 
+Таблица Tasks
+| Field        | Type         | Description                               |
+|--------------|--------------|-------------------------------------------|
+| task_id      | INT          | Уникальный идентификатор задачи           |
+| description  | VARCHAR(255) | Описание задачи                           |
+| priority     | INT          | Приоритет задачи                          |
+| assigned_to  | INT          | Идентификатор гнома, ответственного за задачу 
+                                (NULL, если не назначена)                 |
+| status       | VARCHAR(50)  | Статус задачи                             
+                        (например, 'pending', 'in_progress', 'completed') | 
+ 
