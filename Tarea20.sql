@@ -56,9 +56,9 @@ Select  Dr.name, count (T.task_id)  as TaskCount
 5. Найдите все задачи, которые были назначены гномам из отряда с именем "Guardians".
 
 Select description as GuardiansTask
-From Task 
-On 
+From Task, Dwarves
+Where 
 Task.assigned_to = Dwarves.dwarf_id 
 And Dwarves.squad_id = ´Guardians´;
 
-
+6.
