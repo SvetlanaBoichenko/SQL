@@ -21,7 +21,16 @@ Where age : 150 and profession = '"Warrior';
 | age          | INT          | Возраст гнома                             |
 | profession   | VARCHAR(100) | Профессия гнома                           |
 | squad_id     | INT          | Идентификатор отряда                      
-                                (NULL, если не в отряде)                  |                              (ссылка на dwarf_id из таблицы Dwarves)   |
+                                (NULL, если не в отряде)                  |  
+                                (ссылка на dwarf_id из таблицы Dwarves)   | 
+Таблица Squads
+| Field        | Type         | Description                               |
+|--------------|--------------|-------------------------------------------|
+| squad_id     | INT          | Уникальный идентификатор отряда           |
+| name         | VARCHAR(100) | Название отряда                           |
+| leader_id    | INT          | Идентификатор лидера отряда 
+                                (ссылка на dwarf_id из таблицы Dwarves)   |
+    
 Tasks
 | Field        | Type         | Description                               |
 |--------------|--------------|-------------------------------------------|
@@ -46,6 +55,10 @@ Select  Dr.name, count (T.task_id)  as TaskCount
 
 5. Найдите все задачи, которые были назначены гномам из отряда с именем "Guardians".
 
-
+Select description as GuardiansTask
+From Task 
+On 
+Task.assigned_to = Dwarves.dwarf_id 
+And Dwarves.squad_id = ´Guardians´;
 
 
