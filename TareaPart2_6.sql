@@ -34,26 +34,48 @@ JSON_OBJECT (
   ) as related_entities
 
   From 
-  DWARWES d;
+    DWARWES d;
+
+
+Задача3.
+
+Select 
+  w.workshop_id,
+  w.name,
+  w.type,
+  w.quality,
+  
+  JSON_OBJECT ( 
+  
+  'craftsdwarf_ids', (
+  Select JSON_ARRAYAGG (w_cr.draft_id)
+  From WORKSHOP_CRAFTSWARDERS w_cr
+  WHERE w.workshop_id = w_cr.workshop_id
+  ), 
+
+  'project_ids', (
+  Select JSON_ARRAYAGG (prj.projects_id)
+  From PROJECTS
+  Where (w.workshop_id = prj.workshop_id)
+  ),
+
+ 'input_material_ids', (
+  Select JSON_ARRAYAGG (w_mt.materials_id)
+  From WORKSHOP_MATERIALS w_mt
+  Where (w.workshop_id = w_mt.workshop_id)
+  ),
+
+  'output_product_ids', (
+  Select JSON_ARRAYAGG (w_pr.products_id)
+  From WORKSHOP_PRODUCTS w_pr
+  Where (w.workshop_id = w_pr.workshop_id)
+  )
+  
+) as related_entities
+ 
+  From
+  WORK_SHOP w;
 
 
   
-}
 
-Информация о гноме, включая идентификаторы всех его навыков, текущих назначений,
-принадлежности к отрядам и используемого снаряжения.
-
-  [
-  {
-    "dwarf_id": 101,
-    "name": "Urist McMiner",
-    "age": 65,
-    "profession": "Miner",
-    "related_entities": {
-      "skill_ids": [1001, 1002, 1003],
-      "assignment_ids": [2001, 2002],
-      "squad_ids": [401],
-      "equipment_ids": [5001, 5002, 5003]
-    }
-  }
-]
