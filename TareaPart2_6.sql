@@ -77,5 +77,30 @@ Select
   WORK_SHOP w;
 
 
-  
+  Задача 4.
+
+    Select
+    s.squad_id,
+    s.name,
+    s.formation_type,
+    s.leader_id,
+    
+   JSON_OBJECT ( 
+    
+
+Возвращает информацию о военном отряде, включая идентификаторы всех членов отряда, 
+используемого снаряжения, прошлых и текущих операций, тренировок. 
+    
+    "squad_id": 401,
+    "name": "The Axe Lords",
+    "formation_type": "Melee",
+    "leader_id": 102,
+    "related_entities": {
+      "member_ids": [102, 104, 105, 107, 110],
+      "equipment_ids": [5004, 5005, 5006, 5007, 5008],
+      "operation_ids": [601, 602],
+      "training_schedule_ids": [901, 902],
+      "battle_report_ids": [1101, 1102, 1103]
+    }
+  }
 
