@@ -86,8 +86,18 @@ Select
     s.leader_id,
     
    JSON_OBJECT ( 
-    
+    Select  JSON_ARRAYAGG (sm.draft_id)
+    From SQUAD_MEMBERS sm
+    Where (s.draft_id = sm.draft_id)
+    ),
 
+    SElect JSON_ARRAYAGG (s_eq_equipment_id)
+    From SQUAD_EQUIPNET s_eq
+    Where (s_eq.squad_id = s.squad_id)
+    ),
+
+    
+    
 Возвращает информацию о военном отряде, включая идентификаторы всех членов отряда, 
 используемого снаряжения, прошлых и текущих операций, тренировок. 
     
