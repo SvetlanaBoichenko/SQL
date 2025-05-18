@@ -31,8 +31,7 @@ JSON_OBJECT (
   Where  (d.dwaft_id = s_eq.dwaft_id)
   )
 
-  ) as related_entities
-
+  ) As related_entities
   From 
     DWARWES d;
 
@@ -71,8 +70,7 @@ Select
   Where (w.workshop_id = w_pr.workshop_id)
   )
   
-) as related_entities
- 
+ ) As related_entities 
   From
   WORK_SHOP w;
 
@@ -86,31 +84,40 @@ Select
     s.leader_id,
     
    JSON_OBJECT ( 
+    'member_ids',(
     Select  JSON_ARRAYAGG (sm.draft_id)
     From SQUAD_MEMBERS sm
     Where (s.draft_id = sm.draft_id)
     ),
 
-    SElect JSON_ARRAYAGG (s_eq_equipment_id)
-    From SQUAD_EQUIPNET s_eq
+    'equipment_ids',(
+    SElect JSON_ARRAYAGG (s_eq.equipment_id)
+    From SQUAD_EQUIPMENT s_eq
     Where (s_eq.squad_id = s.squad_id)
     ),
 
-    
-    
-Возвращает информацию о военном отряде, включая идентификаторы всех членов отряда, 
-используемого снаряжения, прошлых и текущих операций, тренировок. 
-    
-    "squad_id": 401,
-    "name": "The Axe Lords",
-    "formation_type": "Melee",
-    "leader_id": 102,
-    "related_entities": {
-      "member_ids": [102, 104, 105, 107, 110],
-      "equipment_ids": [5004, 5005, 5006, 5007, 5008],
-      "operation_ids": [601, 602],
-      "training_schedule_ids": [901, 902],
-      "battle_report_ids": [1101, 1102, 1103]
-    }
-  }
+    'operation_ids', ( 
+    Select JSON_ARRAYAGG (s_op.operation_id)
+    From SQUAD_OPERATIONS s_op
+    Where (s_op.squad_id = s.squad_id)
+    ORDER BY (s_eq.start_date)
+    ),
 
+    'training_schedule_ids', (
+    SElect JSON_ARRAYAGG (s_tr.shedule_id)
+    From SQUAD_TRAINING s_tr
+    Where (s_tr.squad_id = s.squad_id)
+    
+    ),
+
+    'battle_report_ids', (
+    SElect JSON_ARRAYAGG (s_b.report_id)
+    From SQUAD_BATTLES s_eq
+    Where (s_eq.squad_id = s.squad_id)
+    ),
+  
+    ) AS related_entities
+    From 
+    MILITARY_SQUADS s;
+    
+    
