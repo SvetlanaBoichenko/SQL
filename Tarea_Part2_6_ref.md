@@ -14,11 +14,11 @@
 
 Задача 4.   
     Отличие в запросе   
-       'member_ids', (
-            SELECT JSON_ARRAYAGG(sm.dwarf_id)
-            FROM squad_members sm
-            WHERE sm.squad_id = s.squad_id
-        ),
+       'member_ids', (  
+            SELECT JSON_ARRAYAGG(sm.dwarf_id)  
+            FROM squad_members sm  
+            WHERE sm.squad_id = s.squad_id  
+        ),  
         
 
       В моем решении неправильно задано условие отбора:  Where (s.draft_id = sm.draft_id) - это неверно  
