@@ -13,10 +13,10 @@
        D.squad_id = S.squad_id;   
   
 Мое решение:      
-SELECT Dwarves.name, Dwarves.age, Dwarves.profession, 
-       Squads.name as squadsName, Squads.mission as squadsMision
-FROM Dwarves INNER JOIN Squads
-ON  Dwarves.squad_id = Squads.squad_id and Dwarves.squad_id IS NOT NULL;
+SELECT Dwarves.name, Dwarves.age, Dwarves.profession,   
+       Squads.name as squadsName, Squads.mission as squadsMision  
+FROM Dwarves INNER JOIN Squads  
+ON  Dwarves.squad_id = Squads.squad_id and Dwarves.squad_id IS NOT NULL;  
 
 В общем и целом верно. Вывела некоторые лишние поля. Условие IS NOT NULL - было не обязательным,   
 так как ключевое поле первичного ключа не может быть нулевым.  
