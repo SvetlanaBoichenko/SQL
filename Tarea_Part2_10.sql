@@ -28,17 +28,26 @@ LEFT JOIN PRODUCTS pr1 ON pr1.materials_id = wm.materials_id and wm.workshop_id 
 GROUP BY w.workshop_id, w.workshop_name, w.workshop_type), 
 
 ), 
-Production_period AS (
-  
-SELECT  w1.workshop_id, wp1.product_id,
+ 
+Production_period AS ( 
+SELECT w1.workshop_id, wp1.product_id,
 
-Case (When (ROUND (FIRST_VALUE (wp1.production_date) OVER ORDER BY (wp1.production_date) -LAST_VALUE (wp1.production_date)) = 0 
+Case (When  (FIRST_VALUE (wp1.production_date) OVER ORDER BY (wp1.production_date) -LAST_VALUE (wp1.production_date)) = 0 
      Then 1 End), 2) 
 AS  all_product_period
 
-From WORKSHOP_PRODUCTS wp1
-WHERE  wp1.production_date IS NOT NULL
+From WORKSHOP_PRODUCTS wp1, WORKSHOP w1
+WHERE  wp1.production_date IS NOT NULL and wp1.workshop_id = w1.workshop_id
 ),
-Work_shop_util AS (
-  
+
+ Work_shop_util AS (
+ SELECT w2.workshop_id 
+ Production_period/ Case (When (SUM ((LAG (wp2.production_date, 1, 0) OVER ORDER BY (wp2.production_date)) = 0 
+ then 1 End) AS workshop_utilization_percent
+ 
+ From WORKSHOP w2
+ LEFT JOIN WORKSHO_PRODUCTS wp2
+ where w2.workshop_id = wp2.workshop_id
+ ),
+ 
 
