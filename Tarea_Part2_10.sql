@@ -1,33 +1,44 @@
 
-WITH workshop_stats AS (
-SELECT w.workshop_id, w.workshop_name, w.workshop_type, COUNT(wcd.dwarf_id) 
-AS num_craftsdwarves, 
+WITH Workshop_stats AS (
+SELECT w.workshop_id, w.workshop_name, w.workshop_type, 
 
-SUM (CASE WHEN wp.quantity = NULL THEN 0 END)
-AS total_quantity_produced, 
+COUNT(wcd.dwarf_id) AS num_craftsdwarves, 
 
-SUM (pr.value) as total_production_value
-  
-COALESCE (SUM(ea.value), 0) AS artifacts_value, COUNT(DISTINCT es.site_id) 
-AS discovered_sites, 
+SUM (CASE WHEN wp.quantity = NULL THEN 0 END) AS total_quantity_produced, 
 
-SUM(CASE WHEN ec.outcome = 'Favorable' THEN 1 ELSE 0 END) 
-AS favorable_encounters, 
+SUM (pr.value CASE WHEN pr.value = NULL THEN 0 END) as total_production_value,
+ 
+SUM (pr.quantity) as all_product_quantity,
+    
+SUM (wm.quantity) as qnt_m1 
+SUM (pr1.value CASE WHEN pr1.value = NULL THEN 0 END) as sum_m1, 
+  
+FROM WORKSHOP w
 
-COUNT(ec.creature_id) 
-AS total_encounters, 
+LEFT JOIN WORKSHOP_CRAFTSDWARVES wcd ON w.workshop_id = wcd.workshop_id
+  
+LEFT JOIN WORKSHOP_PRODUCTS wp ON w.workshop_id = wp.workshop_id
+  
+LEFT JOIN PRODUCTS pr ON pr.product_id = wp.product_id and wp.workshop_id = w.workshop_id
 
-e.departure_date, 
-e.return_date 
-FROM expeditions e 
+LEFT JOIN  WORKSHOP_MATERIALS wm ON pr1.materials_id = wm.materials_id AND wm.workshop_id = w.workshop_id
   
-LEFT JOIN WORKSHOP_CRAFTSDWARVES wcd ON w.workshop_id = wcd.workshop_id,
+LEFT JOIN PRODUCTS pr1 ON pr1.materials_id = wm.materials_id and wm.workshop_id = w.workshop_id
   
-LEFT JOIN WORKSHOP_PRODUCTS wp ON w.workshop_id = wp.workshop_id,
+GROUP BY w.workshop_id, w.workshop_name, w.workshop_type), 
+
+), 
+Production_period AS (
   
-LEFT JOIN PRODUCTS es ON p.product_id = wp.product_id and wp.workshop_id = w.workshop_id,
+SELECT  w1.workshop_id, wp1.product_id,
+
+Case (When (ROUND (FIRST_VALUE (wp1.production_date) OVER ORDER BY (wp1.production_date) -LAST_VALUE (wp1.production_date)) = 0 
+     Then 1 End), 2) 
+AS  all_product_period
+
+From WORKSHOP_PRODUCTS wp1
+WHERE  wp1.production_date IS NOT NULL
+),
+Work_shop_util AS (
   
-  
-LEFT JOIN expedition_creatures ec ON e.expedition_id = ec.expedition_id 
-  
-GROUP BY e.expedition_id, e.destination, e.status, e.departure_date, e.return_date),
+
