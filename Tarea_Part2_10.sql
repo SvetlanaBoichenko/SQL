@@ -80,14 +80,22 @@ Skill_corr AS (
  ),
 
 SELECT 
-WS.workshop_id, WS.workshop_name, WS.workshop_type,
+WS.workshop_id, 
+WS.workshop_name, 
+WS.workshop_type,
+WS.num_craftsdwarves,
+WS.total_quantity_produced,
+WS.total_production_value,
 
+ROUND((PRP.all_product_period/WS.total_quantity_produced),2) AS daily_production_rate,
 
+ROUND((WS.sum_m1/WS. qnt_m1),2) AS value_per_material_unit,
+ 
 
 
  
 
-WS.
- 
+From Workshop_stats WS
+join  Production_period PRP ON WS.workshop_id = PRP.workshop_id
 
  
