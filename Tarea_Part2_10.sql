@@ -93,15 +93,10 @@ WUP.workshop_utilization_percent,
 MC.material_conversion_ratio,
 DS.average_craftsdwarf_skill,
 skill_quality_correlation 
+) 
+AS PRODUCTION_EFICIENCY
 
-From Workshop_stats WS
-join  Production_period PRP ON WS.workshop_id = PRP.workshop_id
-join  Work_shop_util WUP ON WS.workshop_id = WUP.workshop_id
-join Material_conversion MC ON WS.workshop_id = MC.workshop_id
-join Dward_skill DS ON WS.workshop_id = DS.workshop_id 
-join Skill_corr SC ON WS.workshop_id = SC.workshop_id
-) AS PRODUCTION_EFICIENCY
-JSON_OBJECT(
+ JSON_OBJECT(
 'craftsdwarf_ids',(
    SELECT JSON_ARRAYAGG (wcd3.craftsdwarf_id)
    FROM WORKSHOP_CRAFTSDWARVES wcd3
@@ -123,11 +118,13 @@ JSON_OBJECT(
  FROM PROJECTS P3
  WHERE P3.workshop_id = WS.workshop_id
  )
+AS related_entities
 
- 
- 
-ORDER BY overall_success_score
-DESC
-related_entities
+From Workshop_stats WS
+ join  Production_period PRP ON WS.workshop_id = PRP.workshop_id
+ join  Work_shop_util WUP ON WS.workshop_id = WUP.workshop_id
+ join Material_conversion MC ON WS.workshop_id = MC.workshop_id
+ join Dward_skill DS ON WS.workshop_id = DS.workshop_id 
+ join Skill_corr SC ON WS.workshop_id = SC.workshop_id
 
-
+Order By PRODUCTION_EFICIENCY;
