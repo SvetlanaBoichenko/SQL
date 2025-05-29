@@ -51,29 +51,43 @@ Work_shop_util AS (
  ),
 
 Material_conversion AS (
- pr.project_id, w3.worksop_id, wm2.materials_id
+ pr.project_id, w3.workshop_id, wm2.materials_id
  
  ROUND (SUM (pm.quantity_required::DECIMAL) / Ws3.total_quantity_produced::DECIMAL), 2) AS material_conversion_ratio,
 
  join Workshop_stats ws3 ON Ws3.worksop_id = w3.worksop_id
  join PROJECTS_MATERIALS pm ON pm.materials_id = wm2.materials_id
 
- From WORKSHOP w3,WORKSHOP_MATERIALS wm2
+ From WORKSHOP w3, WORKSHOP_MATERIALS wm2
  where w3.worksop_id = wm2.worksop_id
  ),
 
 Dward_skill AS (
- dw_sk.skill_id, dw_sk.dwarf_id
+ dw_sk.skill_id, dw_sk.dwarf_id, w4.workshop_id
 
  AVG (dw_sk.level) AS average_craftsdwarf_skill
  
- FROM DWARF_SKILLS dw_sk
- join WORKSHOP_CRAFTSDWARVES wcd2 ON wcd2.dwarf_id = dw_sk.dwarf_id
-),
+ FROM DWARF_SKILLS dw_sk, WORKSHOP w4
+ join WORKSHOP_CRAFTSDWARVES wcd2 ON wcd2.dwarf_id = dw_sk.dwarf_id AND w4.workshop_id =  wcd2.workshop_id
+ ),
+
+Skill_corr AS (
+ 
+ Ds.skill_id
+ ROUND (Sum (pr3.quality)/ Ds.average_craftsdwarf_skill),2) AS skill_quality_correlation
+ FROM  Dward_skill.Ds
+ join Products pr3 ON  pr3.workshop_id = Ds.workshop_id
+ ),
+
+SELECT 
+WS.workshop_id, WS.workshop_name, WS.workshop_type,
 
 
 
 
+ 
+
+WS.
  
 
  
