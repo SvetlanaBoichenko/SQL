@@ -2,6 +2,7 @@
 WITH 
 Workshop_stats AS (
  SELECT w.workshop_id, w.workshop_name, w.workshop_type, 
+ 
 
  COUNT(wcd.dwarf_id) AS num_craftsdwarves, 
 
@@ -15,7 +16,6 @@ Workshop_stats AS (
  SUM (pr1.value CASE WHEN pr1.value = NULL THEN 0 END) as sum_m1, 
   
  FROM WORKSHOP w
-
  LEFT JOIN WORKSHOP_CRAFTSDWARVES wcd ON w.workshop_id = wcd.workshop_id
   
  LEFT JOIN WORKSHOP_PRODUCTS wp ON w.workshop_id = wp.workshop_id
@@ -71,8 +71,7 @@ Dward_skill AS (
  join WORKSHOP_CRAFTSDWARVES wcd2 ON wcd2.dwarf_id = dw_sk.dwarf_id AND w4.workshop_id =  wcd2.workshop_id
  ),
 
-Skill_corr AS (
- 
+Skill_corr AS ( 
  Ds.skill_id
  ROUND (Sum (pr3.quality)/ Ds.average_craftsdwarf_skill),2) AS skill_quality_correlation
  FROM  Dward_skill.Ds
@@ -88,14 +87,47 @@ WS.total_quantity_produced,
 WS.total_production_value,
 
 ROUND((PRP.all_product_period/WS.total_quantity_produced),2) AS daily_production_rate,
+ROUND((WS.sum_m1/WS. qnt_m1),2) AS value_per_material_unit, 
 
-ROUND((WS.sum_m1/WS. qnt_m1),2) AS value_per_material_unit,
- 
-
-
- 
+WUP.workshop_utilization_percent,
+MC.material_conversion_ratio,
+DS.average_craftsdwarf_skill,
+skill_quality_correlation 
 
 From Workshop_stats WS
 join  Production_period PRP ON WS.workshop_id = PRP.workshop_id
+join  Work_shop_util WUP ON WS.workshop_id = WUP.workshop_id
+join Material_conversion MC ON WS.workshop_id = MC.workshop_id
+join Dward_skill DS ON WS.workshop_id = DS.workshop_id 
+join Skill_corr SC ON WS.workshop_id = SC.workshop_id
+) AS PRODUCTION_EFICIENCY
+JSON_OBJECT(
+'craftsdwarf_ids',(
+   SELECT JSON_ARRAYAGG (wcd3.craftsdwarf_id)
+   FROM WORKSHOP_CRAFTSDWARVES wcd3
+   WHERE wcd2.workshop_id = WS.workshop_id
+ ),
+ 'product_ids', (
+   SELECT JSON_ARRAYAGG (WP3.craftsdwarf_id)
+   FROM WORKSHOP_PRODUCTS WP3
+   WHERE WP3.workshop_id = WS.workshop_id
+ ),
+ 
+ 'material_ids', (
+ SELECT JSON_ARRAYAGG (WM3.craftsdwarf_id)
+ FROM WORKSHOP_MATERIALS WM3
+ WHERE WM3.workshop_id = WS.workshop_id
+ ),
+ 'project_ids', (
+ SELECT JSON_ARRAYAGG (P3.craftsdwarf_id)
+ FROM PROJECTS P3
+ WHERE P3.workshop_id = WS.workshop_id
+ )
 
  
+ 
+ORDER BY overall_success_score
+DESC
+related_entities
+
+
