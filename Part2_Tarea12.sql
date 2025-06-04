@@ -101,9 +101,21 @@ Select (
 JSON_OBJECT(
 'member_ids', (SELECT JSON_ARRAYAGG (smem.dwarf_id)
 FROM squad_members smem 
-WHERE smem.squad_id = SA.expedition_id ),
+WHERE smem.squad_id = SA.squad_id),
 
+'equipment_ids', (SELECT JSON_ARRAYAGG (se.dwarf_id)
+FROM squad_equipment se 
+WHERE se.squad_id = SA.squad_id),
 
+'battle_report_ids', (SELECT JSON_ARRAYAGG (sbat.report_id)
+FROM squad_battles sbat 
+WHERE sbat.squad_id = SA.squad_id ), 
+      
+'training_ids', (SELECT JSON_ARRAYAGG (str.type)
+FROM squad_training str 
+WHERE str.squad_id = SA.squad_id )      
+)
+AS related_entities
       
 FROM  SQUAD_ACTIVITY SA
 LEFT JOIN SQ_LEADERS SL ON  SL.squad_id = SA.squad_id
