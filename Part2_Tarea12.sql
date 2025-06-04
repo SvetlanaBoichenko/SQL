@@ -14,7 +14,7 @@ COUNT (DISTINCT CASE WHEN(smq.join_date IS NOT NULL AND smq.exit_date IS NULL)TH
 
 COUNT(DISTINCT CASE WHEN smq.join_date IS NOT NULL THEN smq.dwart_id END) AS total_members_ever,
 
-AVG (dqe.quality) AS average_equipment_quality,
+AVG (dqe.quality::INTEGER) AS average_equipment_quality,
 SUM (sqt.duration_hours) AS total_training_session,
 AVG (sqt.effectiveness) AS avg_training_effectiveness,
  
@@ -34,25 +34,20 @@ LEFT JOIN SQUAD_TRAINING sqt ON sqt.squad_id = ms.squad_id
   JOIN  SQUAD_MEMBERS sqm1 ON sqm1.squad_id = ms1.squad_id 
   JOIN  DWARVES dw ON dw.dwart_id = ms1.leader_id
   
-
   Group by ms1.squad_id,   dw.name 
-  
+), SQ_EFFECTIVE AS
+(
+ Select ms2.squad_id
 
- 
-  
- 
-  
---  Расчет % побед сражении, отношение потерь casualty_exchange_ratio
---  кфц удержания retention_rate
+  ROUND ((SA.victories::DECIMAL/NULLIF(SA.total_battles,0))*100,2) AS victory_percentage 
+  ROUND ((SA.current_members::DECIMAL/ NULLIF(SA.total_members_ever,0))*100, 2) AS retention_rate 
+  CORR (SA.avg_training_effectiveness, victory_percentage) AS training_battle_correlation,
 
-ROUND((SA.victories::
-DECIMAL/NULLIF(SA.total_battles,0))*100,2)AS victory_percentage 
-From SQUAD_ACTIVITY SA
+  From  MILITARY_SQUADS ms2
+  JOIN  SQUAD_ACTIVITY SA ON SA.squad_id = ms2.squad_id
+  Group by ms2.squad_id
+),
 
-ROUND((SA.current_members::DECIMAL/ NULLIF(SA.total_members_ever,0))*100,2
-AS retention_rate 
 
-CORR (SA.avg_training_effectiveness, victory_percentage) AS training_battle_correlation,
 
-From SQUAD_ACTIVITY SA
 
