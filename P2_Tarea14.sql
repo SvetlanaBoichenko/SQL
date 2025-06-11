@@ -9,7 +9,7 @@ WITH  trade_balance_all AS (
     group by tt1.transaction_id
     
   ), caravan_trade_data AS (
-    SELECT cv.caravan_id, cv.civilization_type    
+    SELECT cv.caravan_id AScaravan_id , cv.civilization_type    
     COUNT (cv.caravan_id) AS total_caravans,
     
     SUM (tt.value) AS total_trade_value,
@@ -25,7 +25,7 @@ WITH  trade_balance_all AS (
 ), caravan_import_data AS (
    Select
     cg1.material_type AS material_type,
-    cv2.caravan_id,
+    cv2.caravan_id AS caravan_id AS,
     SUM (cg1.quantity) AS total_imported,  
     Count (cg2.good_id)  AS import_diversity   
   
@@ -35,7 +35,7 @@ WITH  trade_balance_all AS (
     group by cv1.material_type
    
 ),  ws_export_data AS (
-   Selsct ws.workshop_id,
+   Select ws.workshop_id AS workshop_id,
   pr.product_type AS  product_type ,
   (SUM (cg3.quantity)- cv_imp.total_imported)/(Coalesce (cv_imp.total_imported, 1)) AS export_ratio,
    AVG (cv3.price_fluctation) AS avg.markup
@@ -88,44 +88,26 @@ group by ws.workshop_id, pr.product_type
     import_diversity AS [cid.import_diversity],
     JSON_OBJECT('resource_ids', (SELECT JSON_ARRAYAGG (fr.resourse_id)
     FROM FORTRES_RESOURCES fr WHERE fr.fortress_id =cid.foreress_id),
-    
+
+     workshop_type AS [wed.workshop_type],
+     product_type AS [wed.product_type],
+     export_ratio AS [wed.export_ratio],
+     avg_markup   AS [wed.avg_markup],
+    JSON_OBJECT('workshop_ids', (SELECT JSON_ARRAYAGG (wsh.workshops_id)
+    FROM WORK_SHOP wsh WHERE (wsh.workshops_id =(wed.workshops_id),
+         
+    year AS [tqd.year],
+    quarter AS [tqd.quarter],
+    quarterly_value AS [tqd.quarterly_value], 
+    quarterly_balance AS [tqd.quarterly_balance],    
+    trade_diversity AS [tqd.trade_diversity] 
     
     From trade_balance_all,
     join caravan_trade_data ctd FOR JSON PATH, ROOT('civilization_trade_data')
-    join  caravan_import_data cid FOR JSON PATH ROOT('critical_import_dependencies')
-    join   ws_export_data FOR JSON PATH ROOT('export_effectiveness')
+    join caravan_import_data cid FOR JSON PATH ROOT('critical_import_dependencies')
+    join ws_export_data wed FOR JSON PATH ROOT ('export_effectiveness')
+    join trade_quarter_data tqd FOR JSON PATH ROOT ('trade_timeline')
 
-    
-
-    "Orders": [
-        {
-            "Order": {
-                "Number": "S043659",
-                "Date": "2011-05-31T00:00:00"
-            },
-            "Account": "Microsoft",
-            "Item": {
-                "UnitPrice": 59.99,
-                "Qty": 1
-            }
-        },
-        {
-            "Order": {
-                "Number": "S043661",
-                "Date": "2011-06-01T00:00:00"
-            },
-            "Account": "Nokia",
-            "Item": {
-                "UnitPrice": 24.99,
-                "Qty": 3
-            }
-        }
-    ]
-}
-
-    
-   SUM (cg1.value) AS total_sell_aravan_value
-   SUM (cg2.value) AS total_buy_caravan_value 
 
   
 
