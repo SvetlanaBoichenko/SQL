@@ -1,15 +1,15 @@
 WITH trade_stats AS (
     SELECT cv.caravan_id, cv.civilization_type
     COUNT (cv.caravan_id) AS total_caravans,
-    SUM (cg.value) AS total_caravan_value,
+    SUM (tt.value) AS total_caravan_value,
     SUM (tt.balance_direction) AS trade_balance,
-    de.relationship.change AS trade_relationship,
-    diplomatic_correlation
+    CORR (tt.value, de.relationship_change) AS diplomatic_correlation
     
     From CARAVANS cv
     Left join CARAVANS_GOODS cg where cg.caravan_id = cv.caravan_id
     Left join TRADE_TRANSACTIONS tt where tt.caravan_id = cv.caravan_id
-    left join DIPLOMATIC_EVENT de where de.caravan_id = cv.caravan_id
+    left join DIPLOMATIC_EVENT de where de.caravan_id = cv.caravan_id AND  tt.caravan_id = cv.caravan_id  
+    group by cv.caravan_id, tt.value, tt.balance_direction
 
 ), trade_balance_all AS (
     SELECT tt1.transaction_id,
