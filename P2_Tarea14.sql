@@ -6,9 +6,9 @@ WITH trade_stats AS (
     CORR (tt.value, de.relationship_change) AS diplomatic_correlation
     
     From CARAVANS cv
-    Left join CARAVANS_GOODS cg where cg.caravan_id = cv.caravan_id
-    Left join TRADE_TRANSACTIONS tt where tt.caravan_id = cv.caravan_id
-    left join DIPLOMATIC_EVENT de where de.caravan_id = cv.caravan_id AND  tt.caravan_id = cv.caravan_id  
+    Left join CARAVANS_GOODS cg ON cg.caravan_id = cv.caravan_id
+    Left join TRADE_TRANSACTIONS tt ON tt.caravan_id = cv.caravan_id
+    left join DIPLOMATIC_EVENT de ON de.caravan_id = cv.caravan_id AND  tt.caravan_id = cv.caravan_id  
     group by cv.caravan_id, tt.value, tt.balance_direction
 
 ), trade_balance_all AS (
@@ -20,7 +20,19 @@ WITH trade_stats AS (
     From TRADE_TRANSACTIONS tt1 
     Left join TRADES tr
     group by tt1.transaction_id
-  ),
+    
+  ), dependencies AS (
+    cv2.caravan_id
+    cv2.material_type AS material_type,
+    SUM (cv2.quantity) AS total_imported ON cv2.type = "Import"
+    COUNT (cv2.type),  AS import_diversity
+    
+    From CARAVANS cv2
+    Left join 
+    group by cv2.caravan_id, cv2.material_type, cv2.quantity
+
+
+    
   
   
 SELECT JSON_OBJECT(
