@@ -1,4 +1,4 @@
-WITH  trade_balance_all AS (
+WITH  trade_balance_all AS {
     SELECT tt1.transaction_id,
     SUM (tt1.balance_direction) as all_time_trade_balance,
     SUM (tt1.value) as all_time_trade_value,
@@ -8,39 +8,57 @@ WITH  trade_balance_all AS (
     Left join TRADES tr
     group by tt1.transaction_id
     
-  ),     
-    caravan_trade_data AS (
+  },     
+    caravan_trade_data AS {
     SELECT cv.caravan_id, cv.civilization_type    
     COUNT (cv.caravan_id) AS total_caravans,
     
     SUM (tt.value) AS total_trade_value,
     SUM (tt.balance_direction) AS trade_balance,
     CORR (tt.value, de.relationship_change) AS diplomatic_correlation
-    
+ 
     From CARAVANS cv
     Left join CARAVANS_GOODS cg ON cg.caravan_id = cv.caravan_id
     Left join TRADE_TRANSACTIONS tt ON tt.caravan_id = cv.caravan_id
     left join DIPLOMATIC_EVENT de ON de.caravan_id = cv.caravan_id AND  tt.caravan_id = cv.caravan_id  
     group by cv.caravan_id, tt.value, tt.balance_direction
 
-
-}, Fortres_data AS ( 
-    fr.fortres_id AS fortresID,
-    cv1.material_type AS material_type,
-    SUM (cv1.value) AS total_imported ON cv1.type = "Import"
-    Count (cv1.good_id) ON cv1.type = "Import" AND  cv1.oriiginal_product_id is not null
-    From FORTRESSES fr
-    Left join CARAVAN cv1 ON cv1.fortres_id = fr_fortres_id
-    
-  "material_type": "Exotic Metals",
-        "dependency_score": 2850.5,
-        "total_imported": 5230,
-        "import_diversity": 4,
+}, caravan_import_data AS { 
+   
+    cg1.material_type AS material_type,
+    SUM (cg1.quantity) AS total_imported,  
+    Count (cg2.good_id)  AS import_diversity   
   
+    From CARAVAN_GOODS cg1
+    left join CARAVAN_GOODS cg2 ON cg2.original_product_id is not null AND cg2.type = "Import"
+    where cg1.type = "Import" 
+    group by cv1.material_type
+   
+}, ws_export_data AS {  
+  ws.workshop_id
+  pr.product_type AS  product_type 
+  (SUM (cg3.quantity)- cv_imp.total_imported)/(Coalesce (cv_imp.total_imported, 1)) AS export_ratio
+   AVG (cv3.price_fluctation) AS avg.markup
     
-"resource_ids": [202, 208, 215]
+From WORKSHOP_PRODUCTS wsp
+left join CARAVANS cv3 
+left join workshops ws ON cv3.fortress_id = ws.fortress_id
+left join products pr ON  ws.workshop_id = wsp.wokshop_id AND wsp.product_id = pr.product_id
+left join  CARAVAN_GOODS cg3 ON cg3_caravan_id = cv3.caravan_id
+left join caravan_import_data cv_imp ON cv_imp.caravan_id = cv3.caravan_id
+}, 
+trade_time_data AS {
+    tt.transaction_id,
+    EXTRACT( YEAR FROM tt2.date) as year,
+    QUARTER (tt2.date) as quarter,
 
 
+    left join CARAVAN_GOODS cg2
+    "year": 205,
+        "quarter": 1,
+        "quarterly_value": 380000,
+        "quarterly_balance": 20000,
+        "trade_diversity": 3    
 
 
     
@@ -59,7 +77,4 @@ JSON_ARRAY
    SUM (cg2.value) AS total_buy_caravan_value 
 
   
-  "total_trading_partners": 5,
-  "all_time_trade_value": 15850000,
-  "all_time_trade_balance": 1250000,
-  "civilization_data": 
+
