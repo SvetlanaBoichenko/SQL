@@ -24,11 +24,11 @@ WITH trade_stats AS (
   ), dependencies AS (
     cv2.caravan_id
     cv2.material_type AS material_type,
-    SUM (cv2.quantity) AS total_imported ON cv2.type = "Import"
-    COUNT (cv2.type),  AS import_diversity
+    SUM (cv2.goods_id) AS total_imported ON cv2.type = "Import"
+    COUNT (tr.triders_id) AS import_diversity
     
     From CARAVANS cv2
-    Left join 
+    Left join TRADERS tr ON cv2.caravan_id = tr.caravan_id
     group by cv2.caravan_id, cv2.material_type, cv2.quantity
 
 
