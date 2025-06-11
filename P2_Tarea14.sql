@@ -25,12 +25,13 @@ WITH  trade_balance_all AS (
 ), caravan_import_data AS (
    Select
     cg1.material_type AS material_type,
+    cv2.caravan_id,
     SUM (cg1.quantity) AS total_imported,  
     Count (cg2.good_id)  AS import_diversity   
   
-    From CARAVAN_GOODS cg1
+    From CARAVAN_GOODS cg1,  CARAVANS cv2
     left join CARAVAN_GOODS cg2 ON cg2.original_product_id is not null AND cg2.type = "Import"
-    where cg1.type = "Import" 
+    where cg1.type = "Import"  AND cv2.caravan_id = cg1.caravan_id
     group by cv1.material_type
    
 ),  ws_export_data AS (
@@ -70,22 +71,59 @@ group by ws.workshop_id, pr.product_type
     tba.total_trading_partners,
     tba.all_time_trade_balance,
     tba.all_time_trade_value,
-
-
-  
-    From trade_balance_all tba
-    left join 
+    
+    civilization_type AS [ctd.civilization_type],
+    total_caravans AS [ctd.total_caravans],
+    total_caravans AS [ctd.total_caravans],
+    total_trade_value AS [ctd.total_trade_value],
+    trade_balance  AS [ctd.trade_balance],
+    trade_relationship AS [ctd,trade_relationship],
+    trade_balance AS [ctd,trade_balance],
+    diplomatic_correlation AS [ctd, diplomatic_correlation],
+    JSON_OBJECT('caravan_ids', (SELECT JSON_ARRAYAGG (cv4.caravan_id)
+    FROM CARAVANS cv4 WHERE cv4.caravan_id =ctd.caravan_id),
+     
+    material_type AS [cid.material_type],
+    dependency_score AS [cid.dependency_score],
+    total_imported AS [cid.total_imported],
+    import_diversity AS [cid.import_diversity],
+        "resource_ids": [202, 208, 215]
+     JSON_OBJECT('resource_ids', (SELECT JSON_ARRAYAGG (cid.caravan_id)
+    FROM CARAVANS cv4 WHERE cv4.caravan_id =ctd.caravan_id),
     
     
-    JSON_OBJECT(
-'total_trading_partners':co.,
-'Lastname':'Targaryen',
-'Children':
-JSON_ARRAY
-(JSON_OBJECT('name':'Jacaerys','lastname':'Velaryon', 'age':20),
-(JSON_OBJECT('name':'Lucerys','lastname':'Velaryon', 'age':18)))
-) json 
+    From trade_balance_all,
+    join caravan_trade_data ctd FOR JSON PATH, ROOT('civilization_trade_data')
+    join  caravan_import_data cid FOR JSON PATH ROOT('critical_import_dependencies')
+ 
 
+    
+
+    "Orders": [
+        {
+            "Order": {
+                "Number": "S043659",
+                "Date": "2011-05-31T00:00:00"
+            },
+            "Account": "Microsoft",
+            "Item": {
+                "UnitPrice": 59.99,
+                "Qty": 1
+            }
+        },
+        {
+            "Order": {
+                "Number": "S043661",
+                "Date": "2011-06-01T00:00:00"
+            },
+            "Account": "Nokia",
+            "Item": {
+                "UnitPrice": 24.99,
+                "Qty": 3
+            }
+        }
+    ]
+}
 
     
    SUM (cg1.value) AS total_sell_aravan_value
