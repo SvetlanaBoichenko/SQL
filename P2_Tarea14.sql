@@ -1,22 +1,25 @@
 WITH trade_stats AS (
-    SELECT cv.caravan_id,
-    COUNT (tr.trader_id) AS total_trading_partners,
+    SELECT cv.caravan_id, cv.civilization_type
     COUNT (cv.caravan_id) AS total_caravans,
     SUM (cg.value) AS total_caravan_value,
- 
-  From CARAVANS cv
-  Left join TRADERS tr where cv.caravan_id = tr.caravan_id
-  Left join CARAVANS_GOODS cg where cg.caravan_id = tr.caravan_id
+    SUM (tt.balance_direction) AS trade_balance,
+    de.relationship.change AS trade_relationship,
+    diplomatic_correlation
+    
+    From CARAVANS cv
+    Left join CARAVANS_GOODS cg where cg.caravan_id = cv.caravan_id
+    Left join TRADE_TRANSACTIONS tt where tt.caravan_id = cv.caravan_id
+    left join DIPLOMATIC_EVENT de where de.caravan_id = cv.caravan_id
 
-), trade_balance AS (
-
-  SELECT de.caravan_id,
-   SUM (cg1.value) AS total_sell_aravan_value
-   SUM (cg2.value) AS total_buy_caravan_value 
-
-  From DIPLOMATIC_EVENTS de1 
-  Left join CARAVANS_GOOD cg1 where cg1.caravan_id = de.caravan_id AND de.outcome = "sell"
-  Left join CARAVANS_GOOD cg2 where cg2.caravan_id = de.caravan_id AND de.outcome = "buy"
+), trade_balance_all AS (
+    SELECT tt1.transaction_id,
+    SUM (tt1.balance_direction) as all_time_trade_balance,
+    SUM (tt1.value) as all_time_trade_value,
+    COUNT(trader_id) AS total_trading_partners
+    
+    From TRADE_TRANSACTIONS tt1 
+    Left join TRADES tr
+    group by tt1.transaction_id
   ),
   
   
@@ -30,6 +33,9 @@ JSON_ARRAY
 ) json 
 
 
+    
+   SUM (cg1.value) AS total_sell_aravan_value
+   SUM (cg2.value) AS total_buy_caravan_value 
 
   
   "total_trading_partners": 5,
