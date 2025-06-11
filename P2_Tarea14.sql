@@ -24,7 +24,7 @@ WITH  trade_balance_all AS {
     group by cv.caravan_id, tt.value, tt.balance_direction
 
 }, caravan_import_data AS { 
-   
+   Select
     cg1.material_type AS material_type,
     SUM (cg1.quantity) AS total_imported,  
     Count (cg2.good_id)  AS import_diversity   
@@ -34,10 +34,10 @@ WITH  trade_balance_all AS {
     where cg1.type = "Import" 
     group by cv1.material_type
    
-}, ws_export_data AS {  
-  ws.workshop_id
-  pr.product_type AS  product_type 
-  (SUM (cg3.quantity)- cv_imp.total_imported)/(Coalesce (cv_imp.total_imported, 1)) AS export_ratio
+},  ws_export_data AS {  
+   Selsct ws.workshop_id,
+  pr.product_type AS  product_type ,
+  (SUM (cg3.quantity)- cv_imp.total_imported)/(Coalesce (cv_imp.total_imported, 1)) AS export_ratio,
    AVG (cv3.price_fluctation) AS avg.markup
     
 From WORKSHOP_PRODUCTS wsp
@@ -46,19 +46,27 @@ left join workshops ws ON cv3.fortress_id = ws.fortress_id
 left join products pr ON  ws.workshop_id = wsp.wokshop_id AND wsp.product_id = pr.product_id
 left join  CARAVAN_GOODS cg3 ON cg3_caravan_id = cv3.caravan_id
 left join caravan_import_data cv_imp ON cv_imp.caravan_id = cv3.caravan_id
-}, 
-trade_time_data AS {
-    tt.transaction_id,
+group by ws.workshop_id, pr.product_type
+
+}, trade_time_data AS {
+    Select tt2.transaction_id,
     EXTRACT( YEAR FROM tt2.date) as year,
-    QUARTER (tt2.date) as quarter,
-
-
-    left join CARAVAN_GOODS cg2
-    "year": 205,
-        "quarter": 1,
-        "quarterly_value": 380000,
-        "quarterly_balance": 20000,
-        "trade_diversity": 3    
+    QUARTER (tt2.date) as quarter
+   From TRADE_TRANSACTIONS tt2
+    
+ }, trade_quarter_data AS {
+    Select tt3.transaction_id,
+    QUARTER (tt3.date) as quarter3,
+    EXTRACT( YEAR FROM tt3.date) as year3,
+    SUM (ttd.value) AS quarterly_value,
+    SUM (ttd.balance) AS quarterly_balance,
+    COUNT (distinct ttd.caravan_items)+ COUNT (distinct ttd.fortress_items) AS trade_diversity
+    
+   From TRADE_TRANSACTIONS tt3
+   left join trade_time_data ttd ON ttd.quarter3 = tt2.quarter AND ttd.year3 = tt2.year
+   group by tt3.transaction_id, tt3.date
+    }, 
+    
 
 
     
