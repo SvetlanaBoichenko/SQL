@@ -1,17 +1,4 @@
-WITH trade_stats AS (
-    SELECT cv.caravan_id, cv.civilization_type
-    COUNT (cv.caravan_id) AS total_caravans,
-    SUM (tt.value) AS total_caravan_value,
-    SUM (tt.balance_direction) AS trade_balance,
-    CORR (tt.value, de.relationship_change) AS diplomatic_correlation
-    
-    From CARAVANS cv
-    Left join CARAVANS_GOODS cg ON cg.caravan_id = cv.caravan_id
-    Left join TRADE_TRANSACTIONS tt ON tt.caravan_id = cv.caravan_id
-    left join DIPLOMATIC_EVENT de ON de.caravan_id = cv.caravan_id AND  tt.caravan_id = cv.caravan_id  
-    group by cv.caravan_id, tt.value, tt.balance_direction
-
-), trade_balance_all AS (
+WITH  trade_balance_all AS (
     SELECT tt1.transaction_id,
     SUM (tt1.balance_direction) as all_time_trade_balance,
     SUM (tt1.value) as all_time_trade_value,
@@ -21,20 +8,42 @@ WITH trade_stats AS (
     Left join TRADES tr
     group by tt1.transaction_id
     
-  ), dependencies AS (
-    cv2.caravan_id
-    cv2.material_type AS material_type,
-    SUM (cv2.goods_id) AS total_imported ON cv2.type = "Import"
-    COUNT (tr.triders_id) AS import_diversity
+  ),     
+    caravan_trade_data AS (
+    SELECT cv.caravan_id, cv.civilization_type    
+    COUNT (cv.caravan_id) AS total_caravans,
     
-    From CARAVANS cv2
-    Left join TRADERS tr ON cv2.caravan_id = tr.caravan_id
-    group by cv2.caravan_id, cv2.material_type, cv2.quantity
+    SUM (tt.value) AS total_trade_value,
+    SUM (tt.balance_direction) AS trade_balance,
+    CORR (tt.value, de.relationship_change) AS diplomatic_correlation
+    
+    From CARAVANS cv
+    Left join CARAVANS_GOODS cg ON cg.caravan_id = cv.caravan_id
+    Left join TRADE_TRANSACTIONS tt ON tt.caravan_id = cv.caravan_id
+    left join DIPLOMATIC_EVENT de ON de.caravan_id = cv.caravan_id AND  tt.caravan_id = cv.caravan_id  
+    group by cv.caravan_id, tt.value, tt.balance_direction
+
+
+}, Fortres_data AS ( 
+    fr.fortres_id AS fortresID,
+    cv1.material_type AS material_type,
+    SUM (cv1.value) AS total_imported ON cv1.type = "Import"
+    Count (cv1.good_id) ON cv1.type = "Import" AND  cv1.oriiginal_product_id is not null
+    From FORTRESSES fr
+    Left join CARAVAN cv1 ON cv1.fortres_id = fr_fortres_id
+    
+  "material_type": "Exotic Metals",
+        "dependency_score": 2850.5,
+        "total_imported": 5230,
+        "import_diversity": 4,
+  
+    
+"resource_ids": [202, 208, 215]
+
+
 
 
     
-  
-  
 SELECT JSON_OBJECT(
 'total_trading_partners':co.,
 'Lastname':'Targaryen',
