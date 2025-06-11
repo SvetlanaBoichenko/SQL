@@ -84,18 +84,16 @@ group by ws.workshop_id, pr.product_type
     FROM CARAVANS cv4 WHERE cv4.caravan_id =ctd.caravan_id),
      
     material_type AS [cid.material_type],
-    dependency_score AS [cid.dependency_score],
     total_imported AS [cid.total_imported],
     import_diversity AS [cid.import_diversity],
-        "resource_ids": [202, 208, 215]
-     JSON_OBJECT('resource_ids', (SELECT JSON_ARRAYAGG (cid.caravan_id)
-    FROM CARAVANS cv4 WHERE cv4.caravan_id =ctd.caravan_id),
+    JSON_OBJECT('resource_ids', (SELECT JSON_ARRAYAGG (fr.resourse_id)
+    FROM FORTRES_RESOURCES fr WHERE fr.fortress_id =cid.foreress_id),
     
     
     From trade_balance_all,
     join caravan_trade_data ctd FOR JSON PATH, ROOT('civilization_trade_data')
     join  caravan_import_data cid FOR JSON PATH ROOT('critical_import_dependencies')
- 
+    join   ws_export_data FOR JSON PATH ROOT('export_effectiveness')
 
     
 
