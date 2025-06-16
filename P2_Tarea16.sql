@@ -14,10 +14,27 @@ With creature_statiscic AS (
   Where cr.active = true
   Order By cr.type, cr.creature_id
 
-
-  
-
-        SUM (cr.thread_level) AS current_threat_level
+ ) location_data AS (
+ Select lc.location_id,
+ lc.zone_id AS zone_id,
+ lc.name AS zone_name,
+ lc.fortification_level AS fortification_level,
+ mcz.response_time AS military_response_time,
+ 
+ 
+ 
+"zone_id": 15,
+"zone_name": "Eastern Gate",
+"vulnerability_score": 0.68,
+"historical_breaches": 8,
+"fortification_level": 2,
+"military_response_time": 48,
+"defense_coverage": {
+"structure_ids": [182, 183, 184],
+"squad_ids": [401,
+        
+ 
+ SUM (cr.thread_level) AS current_threat_level
   
 total_recorded_attacks": 183,
   "unique_attackers": 42,
@@ -34,13 +51,4 @@ total_recorded_attacks": 183,
           "estimated_numbers": 35,
           "creature_ids": [124, 126, 128, 132, 136]
         },
-        {
-          "creature_type": "Forgotten Beast",
-          "threat_level": 5,
-          "last_sighting_date": "0205-07-28",
-          "territory_proximity": 3.5,
-          "estimated_numbers": 1,
-          "creature_ids": [158]
-        }
-      ]
     },
