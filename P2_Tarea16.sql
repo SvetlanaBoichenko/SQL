@@ -14,24 +14,26 @@ With creature_statiscic AS (
   Where cr.active = true
   Order By cr.type, cr.creature_id
 
- ) location_data AS (
+ ) zona_data AS (
+ 
  Select lc.location_id,
- lc.zone_id AS zone_id,
- lc.name AS zone_name,
+ mcz.zone_id AS zone_id,
+ mcz.name AS zone_name,
  lc.fortification_level AS fortification_level,
+ lc.wall_integrity AS historical_breaches,
  mcz.response_time AS military_response_time,
+
+(mnz.fortification_level*0.8 - lc.wall_integrity_0.2) AS vulnerability_score
  
+ From  Locations lc
+ left join Military_Coverage_Zones mcz ON st zone_id = lc.zone_id
+ ), defence_data AS (
  
+
  
-"zone_id": 15,
-"zone_name": "Eastern Gate",
-"vulnerability_score": 0.68,
-"historical_breaches": 8,
-"fortification_level": 2,
-"military_response_time": 48,
-"defense_coverage": {
-"structure_ids": [182, 183, 184],
-"squad_ids": [401,
+ "defense_type": "Drawbridge",
+        "effectiveness_rate": 95.12,
+        "avg_enemy_casualties": 12.4,
         
  
  SUM (cr.thread_level) AS current_threat_level
