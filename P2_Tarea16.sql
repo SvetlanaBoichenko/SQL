@@ -13,28 +13,32 @@ With creature_statiscic AS (
   Left join Creature_Territories ct ON  cr.creature_id = ct.creature_id AND  ct.danger_leve = cr.threat_level  
   Where cr.active = true
   Order By cr.type, cr.creature_id
-
- ) zona_data AS (
+ ),
  
+ zona_data AS (
  Select lc.location_id,
- mcz.zone_id AS zone_id,
- mcz.name AS zone_name,
+ lc.zone_id AS zone_id,
+ lc.name AS zone_name,
  lc.fortification_level AS fortification_level,
  lc.wall_integrity AS historical_breaches,
- mcz.response_time AS military_response_time,
+ ca.military_response_time_minutes AS military_response_time,
 
-(mnz.fortification_level*0.8 - lc.wall_integrity_0.2) AS vulnerability_score
+(lc.fortification_level*0.6 + lc.trap_density*0.2 - lc.wall_integrity_0.2) AS vulnerability_score
  
  From  Locations lc
- left join Military_Coverage_Zones mcz ON st zone_id = lc.zone_id
- ), defence_data AS (
+ left join Creature_Attacks ca ON ca location_id = lc.location_id
+ ), 
+ 
+ defence_data AS (
+ ca.defense_structures_used AS defense_type, 
+ RAUND ((SUM(Case when ca.outcome = true then 1))/SUM(Case when ca.outcome = false then 1))*100, 2)
+ AS effectiveness_rate,
+ AVG (ca.enemi_casualtied) AS avg_enemy_casualties
+
+ From creature_attacs ca
+ ), 
  
 
- 
- "defense_type": "Drawbridge",
-        "effectiveness_rate": 95.12,
-        "avg_enemy_casualties": 12.4,
-        
  
  SUM (cr.thread_level) AS current_threat_level
   
