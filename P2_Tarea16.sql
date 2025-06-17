@@ -12,7 +12,7 @@ With creature_statiscic AS (
   From Creatures cr
   Left join Creature_Territories ct ON  cr.creature_id = ct.creature_id AND  ct.danger_leve = cr.threat_level  
   Where cr.active = true
-  Order By cr.type, cr.creature_id
+  group By cr.type, cr.creature_id
  ),
  
  zona_data AS (
@@ -27,15 +27,19 @@ With creature_statiscic AS (
  
  From  Locations lc
  left join Creature_Attacks ca ON ca location_id = lc.location_id
+ group by lc.location_id,lc.zone_id
  ), 
  
  defence_data AS (
+ ca.atacks_id,
  ca.defense_structures_used AS defense_type, 
  RAUND ((SUM(Case when ca.outcome = true then 1))/SUM(Case when ca.outcome = false then 1))*100, 2)
  AS effectiveness_rate,
  AVG (ca.enemi_casualtied) AS avg_enemy_casualties
 
  From creature_attacs ca
+ group by ca.atacks_id, ca.defense_structures_used
+ 
  ), squad_data AS (
   
  Select sq.squad_id AS squad_id,
@@ -45,18 +49,25 @@ With creature_statiscic AS (
         ROUND (SUM (CASE WHEN sb.outcom = 'win' THEN 1) / 
             COALESQUE (SUM(CASE WHEN sb.outcom = 'loose' THEN 1), 1 ), 2 ) 
            AS combat_effectiveness;
-        ROUND 
+        
 
  From Military_Squads sq
  Left join Squad_Members sm ON sm.squad_id = sq.squad_id,
  left join Dwarf_Skills ds ON sm.squad_id = sq.squad_id AND sm.dwarf_id = ds.dwarf_id
- left join Squad_Battles sb ON sb.squad_id = sq.squad_id 
+ left join Squad_Battles sb ON sb.squad_id = sq.squad_id
+ group by sq.squad_id, sq.name
 ), 
+  defence_data AS (
 
+  ca.atacs_id,
+  EXTRACT(YEAR FROM ca.date) AS year,
+  count (ca.atack_id) as total_attacks,
+  count (ca.casualities) as casualities,
+  ROUND (SUM (CASE WHEN ca.outcom = 'win' THEN 1) / 
+        COALESQUE (SUM(CASE WHEN ca.outcom = 'loose' THEN 1), 1 ), 2 ) 
+        AS "defense_success_rate"
+  from creature_attacs ca
+  group by ca.attacs_id,
+  order by year 
+  ), 
 
-"year": 203,
-        "defense_success_rate": 68.42,
-        "total_attacks": 38,
-        "casualties": 42,
-        "year_over_year_improvement": 3.20
- 
