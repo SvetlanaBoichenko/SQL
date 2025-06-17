@@ -79,8 +79,9 @@ JSON_OBJECT(
  'security_analysis' (
   JSON_OBJECT 'threat_assessment'(
               'current_threat_level', cs.threat_level
-               Select JSON_ARRAYAGG 'active_threats'( 
-                    JSON_OBJECT (
+               Select JSON_ARRAYAGG 
+                    'active_threats'( 
+                     JSON_OBJECT (
                      'creature_type', cs.creature_type,
                       'last_sighting_date', cs.last_sighting_date,
                       'estimated_numbers', cs.estimated_numbers,
@@ -88,15 +89,28 @@ JSON_OBJECT(
                       Select JSON_ARRAYAGG (DISTINCT cr.creature_id)
                              From Creatures cr
                              where cr.creature_id = cs.creature_id),
+                       ),
+                       'vulnerability_analysis' (
+                       JSON_OBJECT ( 
+                       'zone_id', zd.zone_id,
+                       'historical_breaches', zd.historical_breaches,
+                       'fortification_level', zd.fortification_level,
+                       'military_response_time', zd.military_response_time,
+                       'defense_coverage', 
+                            JSON_OBJECT (
+                             Select JSON_ARRAYAGG (DISTINCT str.structure_id)
+                             From Creatures cr
+                             where cr.creature_id = cs.creature_id), 
   
-
-
-  
-creature_type,                             -- Goblin  
-        SUM (cr.threat_level) AS threat_level,                --Or Sum
-        MAX(cr.last_sighting_date) AS last_sighting_date,     -- Последняя дата наблюдения
-        SUM (cr.estimate_population) AS estimated_numbers
-        ct.distance_to_fortress AS territory_proximity
+        "defense_coverage": {
+          "structure_ids": [182, 183, 184],
+          "squad_ids": [401, 405]
+        }  lc.zone_id AS zone_id,
+ lc.name AS zone_name,
+ lc.fortification_level AS fortification_level,
+ lc.wall_integrity AS historical_breaches,
+ ca.military_response_time_minutes AS military_response_time,
+      }
 
 
 
