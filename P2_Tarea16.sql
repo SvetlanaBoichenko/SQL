@@ -42,7 +42,7 @@ With creature_statiscic AS (
   
  Select sq.squad_id AS squad_id,
         sq.name AS squad_name,
-        SUM (sm.dwart_id) where sm.exit_reason = NULL,
+        SUM (sm.dwart_id) where sm.exit_reason = NULL AS active_members,
         AVG (ds.level) AS avg_combat_skill,
         ROUND (SUM (CASE WHEN sb.outcom = 'win' THEN 1) / 
             COALESQUE (SUM(CASE WHEN sb.outcom = 'loose' THEN 1), 1 ), 2 ) 
@@ -55,7 +55,7 @@ With creature_statiscic AS (
  left join Squad_Battles sb ON sb.squad_id = sq.squad_id
  group by sq.squad_id, sq.name
 ), 
-  defence_data AS (
+  atacs_data AS (
 
   ca.atacs_id,
   EXTRACT(YEAR FROM ca.date) AS year,
@@ -68,7 +68,9 @@ With creature_statiscic AS (
   group by ca.attacs_id,
   order by year 
   ), 
-Select   
+----------------
+  
+ Select   
  (Select(count ( ca.atacs_id) FROM CreatureAttacs AS total_recorded_attacks),
  (Select(count (DISTINCT ca.creature_id) FROM CreatureAttacs AS total_recorded_attacks), 
  (Select ROUND (SUM (CASE WHEN ca.outcom = 'win' THEN 1) / 
@@ -106,7 +108,7 @@ JSON_OBJECT(
                              Select JSON_ARRAYAGG (DISTINCT str.structure_id)
                              From Defense_Structures ds
                              where ds.creature_id = cs.creature_id), 
-                       ),
+                       )
                       ),
 
                     'defense_effectiveness', 
@@ -118,53 +120,40 @@ JSON_OBJECT(
                             Select JSON_ARRAYAGG (DISTINCT str1.structure_id)
                              From Defense_Structures ds1
                              where ds1.creature_id = cs.creature_id), 
-                       ),
+                       )
                      ),
   
                    'military_readiness_assessment',
                     JSON_OBJECT (
+                      'squad_id', ad.squad_id,
+                      'squad_name',ad.squad_name,
+                      'active_members', ad.active_members,
+                      'avg_combat_skill', ad.avg_combat_skill,
+                      'combat_effectiveness', ad.combat_effectiveness,
+                      'response_coverage',
+                       SELECT JSON_ARRAYAGG(DISTINCT mcz.zone_id)
+                           From Military_Coverage_Zone mcz
+                           WHERE mcz.squad_id = cs.squad_id,
+                      )
+                   ),
+                  'security_evolution', 
+                   JSON_OBJECT (
+                   'year', se.year,
+                   'defense_success_rate', se.defense_success_rate,
+                   'total_attacks', se.total_attacks,
+                   'casualties', se.casualties,
+                  
+                   )
+                 )
 
-    
+            From creature_statistic cs,
+            join zona_data zd ,
+            join defence_data ds,
+            join squad_data sq,
+            join attacs_data ad
+             
   
   
-  "military_readiness_assessment": [
-      {
-        "squad_id": 403,
-        "squad_name": "Crossbow Legends",
-        "readiness_score": 0.92,
-        "active_members": 7,
-        "avg_combat_skill": 8.6,
-        "combat_effectiveness": 0.85,
-        "response_coverage": [
-          {
-            "zone_id": 12,
-            "response_time": 0
-
-
-
-
-
-  
-  
-
-  
-  
-  
-  "security_analysis": {
-    "threat_assessment": {
-      "current_threat_level": "Moderate",
-      "active_threats": [
-        {
-          "creature_type": "Goblin",
-
-
-JSON_ARRAYAGG(
-
-
-
-
-
-
 
   
   
