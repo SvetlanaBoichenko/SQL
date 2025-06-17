@@ -36,25 +36,27 @@ With creature_statiscic AS (
  AVG (ca.enemi_casualtied) AS avg_enemy_casualties
 
  From creature_attacs ca
- ), 
- 
-
- 
- SUM (cr.thread_level) AS current_threat_level
+ ), squad_data AS (
   
-total_recorded_attacks": 183,
-  "unique_attackers": 42,
-  "overall_defense_success_rate": 76.50,
-  "security_analysis": {
-    "threat_assessment": {
-      "current_threat_level": "Moderate",
-      "active_threats": [
-        {
-          "creature_type": "Goblin",
-          "threat_level": 3,
-          "last_sighting_date": "0205-08-12",
-          "territory_proximity": 1.2,
-          "estimated_numbers": 35,
-          "creature_ids": [124, 126, 128, 132, 136]
-        },
-    },
+ Select sq.squad_id AS squad_id,
+        sq.name AS squad_name,
+        SUM (sm.dwart_id) where sm.exit_reason = NULL,
+        AVG (ds.level) AS avg_combat_skill,
+        ROUND (SUM (CASE WHEN sb.outcom = 'win' THEN 1) / 
+            COALESQUE (SUM(CASE WHEN sb.outcom = 'loose' THEN 1), 1 ), 2 ) 
+           AS combat_effectiveness;
+        ROUND 
+
+ From Military_Squads sq
+ Left join Squad_Members sm ON sm.squad_id = sq.squad_id,
+ left join Dwarf_Skills ds ON sm.squad_id = sq.squad_id AND sm.dwarf_id = ds.dwarf_id
+ left join Squad_Battles sb ON sb.squad_id = sq.squad_id 
+), 
+
+
+"year": 203,
+        "defense_success_rate": 68.42,
+        "total_attacks": 38,
+        "casualties": 42,
+        "year_over_year_improvement": 3.20
+ 
