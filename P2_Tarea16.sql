@@ -1,6 +1,6 @@
 
 With creature_statiscic AS (
- Select cr.creature_id, 
+ Select cr.creature_id AS creature_id, 
         cr.type AS creature_type,                             -- Goblin  
         SUM (cr.threat_level) AS threat_level,                --Or Sum
         MAX(cr.last_sighting_date) AS last_sighting_date,     -- Последняя дата наблюдения
@@ -74,7 +74,56 @@ Select
  (Select ROUND (SUM (CASE WHEN ca.outcom = 'win' THEN 1) / 
         COALESQUE (SUM(CASE WHEN ca.outcom = 'loose' THEN 1), 1 ), 2 ) AS overall_defense_success_rate,
 
-  SELECT JSON_ARRAYAGG(
-JSON_OBJECT(
+  SELECT 
+JSON_OBJECT( 
+ 'security_analysis' (
+  JSON_OBJECT 'threat_assessment'(
+              'current_threat_level', cs.threat_level
+               Select JSON_ARRAYAGG 'active_threats'( 
+                    JSON_OBJECT (
+                     'creature_type', cs.creature_type,
+                      'last_sighting_date', cs.last_sighting_date,
+                      'estimated_numbers', cs.estimated_numbers,
+                      'creature_ids',(
+                      Select JSON_ARRAYAGG (DISTINCT cr.creature_id)
+                             From Creatures cr
+                             where cr.creature_id = cs.creature_id),
+  
+
+
+  
+creature_type,                             -- Goblin  
+        SUM (cr.threat_level) AS threat_level,                --Or Sum
+        MAX(cr.last_sighting_date) AS last_sighting_date,     -- Последняя дата наблюдения
+        SUM (cr.estimate_population) AS estimated_numbers
+        ct.distance_to_fortress AS territory_proximity
+
+
+
+
+
+  
+  
+
+  
+  
+  
+  "security_analysis": {
+    "threat_assessment": {
+      "current_threat_level": "Moderate",
+      "active_threats": [
+        {
+          "creature_type": "Goblin",
+
+
+JSON_ARRAYAGG(
+
+
+
+
+
+
+
+  
   
 
