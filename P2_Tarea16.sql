@@ -55,7 +55,7 @@ With creature_statiscic AS (
  left join Squad_Battles sb ON sb.squad_id = sq.squad_id
  group by sq.squad_id, sq.name
 ), 
-  atacs_data AS (
+  attacs_data AS (
 
   ca.atacs_id,
   EXTRACT(YEAR FROM ca.date) AS year,
@@ -78,8 +78,8 @@ With creature_statiscic AS (
 
   SELECT 
 JSON_OBJECT( 
- 'security_analysis' (
-  JSON_OBJECT 'threat_assessment'(
+  (
+  JSON_OBJECT (
               'current_threat_level', cs.threat_level
                Select JSON_ARRAYAGG 
                     'active_threats'( 
@@ -90,9 +90,13 @@ JSON_OBJECT(
                       'creature_ids',(
                       Select JSON_ARRAYAGG (DISTINCT cr.creature_id)
                              From Creatures cr
-                             where cr.creature_id = cs.creature_id),
-                       ),
-                       'vulnerability_analysis' (
+                             where cr.creature_id = cs.creature_id)
+             
+                      From creature_statistic cs
+                        )  AS 'threat_assessment',
+                     ) AS security_analysis,
+             
+                   
                        JSON_OBJECT ( 
                        'zone_id', zd.zone_id,
                        'historical_breaches', zd.historical_breaches,
@@ -103,15 +107,16 @@ JSON_OBJECT(
                              'structure_ids',
                              Select JSON_ARRAYAGG (DISTINCT str.structure_id)
                              From Defense_Structures ds
-                             where ds.creature_id = cs.creature_id), 
+                             where (ds.creature_id = cs.creature_id), 
                              'squad_ids',
                              Select JSON_ARRAYAGG (DISTINCT str.structure_id)
                              From Defense_Structures ds
-                             where ds.creature_id = cs.creature_id), 
+                             where (ds.creature_id = cs.creature_id), 
                        )
-                      ),
+                      From Zona_Data zd
+                     ) AS vulnerability_analysis',
 
-                    'defense_effectiveness', 
+                    
                      JSON_OBJECT (
                        'defense_type', ds.defense_type,
                        'effectiveness_rate', ds.effectiveness_rate,
@@ -119,11 +124,13 @@ JSON_OBJECT(
                         'structure_ids',
                             Select JSON_ARRAYAGG (DISTINCT str1.structure_id)
                              From Defense_Structures ds1
-                             where ds1.creature_id = cs.creature_id), 
-                       )
-                     ),
-  
-                   'military_readiness_assessment',
+                               where (ds1.creature_id = cs.creature_id) 
+                       
+                     )
+                       From  defence_data ds
+                        AS defense_effectiveness, 
+                     
+                   
                     JSON_OBJECT (
                       'squad_id', ad.squad_id,
                       'squad_name',ad.squad_name,
@@ -134,24 +141,20 @@ JSON_OBJECT(
                        SELECT JSON_ARRAYAGG(DISTINCT mcz.zone_id)
                            From Military_Coverage_Zone mcz
                            WHERE mcz.squad_id = cs.squad_id,
-                      )
-                   ),
-                  'security_evolution', 
+                      ) From squad_data sq
+                     
+                    AS military_readiness_assessment',
+                   
+                 
                    JSON_OBJECT (
-                   'year', se.year,
-                   'defense_success_rate', se.defense_success_rate,
-                   'total_attacks', se.total_attacks,
-                   'casualties', se.casualties,
+                   'year', ad.year,
+                   'defense_success_rate', ad.defense_success_rate,
+                   'total_attacks', ad.total_attacks,
+                   'casualties', ad.casualties,
                   
-                   )
-                 )
-
-            From creature_statistic cs,
-            join zona_data zd ,
-            join defence_data ds,
-            join squad_data sq,
-            join attacs_data ad
-             
+                   ) From attacs_data ad
+                   AS security_evolution
+         
   
   
 
