@@ -98,19 +98,47 @@ JSON_OBJECT(
                        'military_response_time', zd.military_response_time,
                        'defense_coverage', 
                             JSON_OBJECT (
+                             'structure_ids',
                              Select JSON_ARRAYAGG (DISTINCT str.structure_id)
-                             From Creatures cr
-                             where cr.creature_id = cs.creature_id), 
+                             From Defense_Structures ds
+                             where ds.creature_id = cs.creature_id), 
+                             'squad_ids',
+                             Select JSON_ARRAYAGG (DISTINCT str.structure_id)
+                             From Defense_Structures ds
+                             where ds.creature_id = cs.creature_id), 
+                       ),
+                      ),
+
+                    'defense_effectiveness', 
+                     JSON_OBJECT (
+                       'defense_type', ds.defense_type,
+                       'effectiveness_rate', ds.effectiveness_rate,
+                       'avg_enemy_casualties', ds.avg_enemy_casualties,
+                        'structure_ids',
+                            Select JSON_ARRAYAGG (DISTINCT str1.structure_id)
+                             From Defense_Structures ds1
+                             where ds1.creature_id = cs.creature_id), 
+                       ),
+                     ),
   
-        "defense_coverage": {
-          "structure_ids": [182, 183, 184],
-          "squad_ids": [401, 405]
-        }  lc.zone_id AS zone_id,
- lc.name AS zone_name,
- lc.fortification_level AS fortification_level,
- lc.wall_integrity AS historical_breaches,
- ca.military_response_time_minutes AS military_response_time,
-      }
+                   'military_readiness_assessment',
+                    JSON_OBJECT (
+
+    
+  
+  
+  "military_readiness_assessment": [
+      {
+        "squad_id": 403,
+        "squad_name": "Crossbow Legends",
+        "readiness_score": 0.92,
+        "active_members": 7,
+        "avg_combat_skill": 8.6,
+        "combat_effectiveness": 0.85,
+        "response_coverage": [
+          {
+            "zone_id": 12,
+            "response_time": 0
 
 
 
