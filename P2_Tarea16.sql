@@ -1,6 +1,4 @@
 
-Историю всех атак существ и их исходов
-
 With creature_statiscic AS (
  Select cr.creature_id, 
         cr.type AS creature_type,                             -- Goblin  
@@ -70,4 +68,13 @@ With creature_statiscic AS (
   group by ca.attacs_id,
   order by year 
   ), 
+Select   
+ (Select(count ( ca.atacs_id) FROM CreatureAttacs AS total_recorded_attacks),
+ (Select(count (DISTINCT ca.creature_id) FROM CreatureAttacs AS total_recorded_attacks), 
+ (Select ROUND (SUM (CASE WHEN ca.outcom = 'win' THEN 1) / 
+        COALESQUE (SUM(CASE WHEN ca.outcom = 'loose' THEN 1), 1 ), 2 ) AS overall_defense_success_rate,
+
+  SELECT JSON_ARRAYAGG(
+JSON_OBJECT(
+  
 
